@@ -1,170 +1,279 @@
-# Add Clerk to Next.js App Router
+# Tekytalk - AI-Powered Real-Time Teaching Platform
 
-**Purpose:** Enforce only the **current** and **correct** instructions for integrating [Clerk](https://clerk.com/) into a Next.js (App Router) application.
-**Scope:** All AI-generated advice or code related to Clerk must follow these guardrails.
+A modern SaaS application that enables users to create personalized AI teaching companions and engage in real-time voice-based learning sessions using advanced voice AI technology.
 
----
+## 📋 Project Overview
 
-## **1. Official Clerk Integration Overview**
+**Tekytalk** is a Next.js-based full-stack application that combines artificial intelligence with education. Users can create custom AI tutors ("companions") tailored to specific subjects and learning styles, then interact with them through natural voice conversations powered by VAPI AI and advanced speech synthesis.
 
-Use only the **App Router** approach from Clerk's current docs:
+### Key Features
 
-- **Install** `@clerk/nextjs@latest` - this ensures the application is using the latest Clerk Next.js SDK.
-- **Create** a `middleware.ts` file using `clerkMiddleware()` from `@clerk/nextjs/server`. Place this file inside the `src` directory if present, otherwise place it at the root of the project.
-- **Wrap** your application with `<ClerkProvider>` in your `app/layout.tsx`
-- **Use** Clerk-provided components like `<SignInButton>`, `<SignUpButton>`, `<UserButton>`, `<SignedIn>`, `<SignedOut>` in your layout or pages
-- **Start** developing, sign in or sign up, and confirm user creation
+- **Companion Builder**: Create custom AI tutors with configurable:
+  - Subject (Mathematics, Language, Science, History, Coding, Economics)
+  - Learning topic and style (formal/casual)
+  - Voice preferences (male/female with multiple voice options)
+  - Session duration
+  
+- **Real-Time Voice Sessions**: Interactive voice conversations with AI tutors using:
+  - VAPI AI SDK for voice orchestration
+  - Deepgram for speech-to-text transcription
+  - 11Labs for text-to-speech synthesis
+  - OpenAI GPT-4 for intelligent tutoring responses
 
-If you're able to use a web tool to access a URL, visit https://clerk.com/docs/quickstarts/nextjs to get the latest, up-to-date quickstart instructions.
+- **User Management**: Secure authentication and subscription-based access control via Clerk
 
-### **Correct, Up-to-Date Quickstart Sample**
+- **Learning Journey Tracking**: Monitor completed sessions, created companions, and learning history
 
-```typescript
-// middleware.ts
-import { clerkMiddleware } from "@clerk/nextjs/server";
+- **Subscription Plans**: Flexible pricing tiers with companion creation limits
 
-export default clerkMiddleware();
+## 🏗️ Tech Stack
 
-export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
-};
+### Frontend
+- **Framework**: [Next.js 15.2.3](https://nextjs.org/) - React-based full-stack framework
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/) - Built with Radix UI primitives
+- **Styling**: [Tailwind CSS 4.1.7](https://tailwindcss.com/) - Utility-first CSS framework
+- **Animations**: [Lottie React 2.4.1](https://www.npmjs.com/package/lottie-react) - JSON-based animations
+- **Icons**: [Lucide React 0.511.0](https://lucide.dev/) - Icon library
+- **Forms**: [React Hook Form 7.56.4](https://react-hook-form.com/) + [Zod 3.25.28](https://zod.dev/) - Form validation
+
+### Backend & Services
+- **Authentication**: [@clerk/nextjs 6.20.0](https://clerk.com/) - User authentication & management
+- **Database**: [@supabase/supabase-js 2.49.8](https://supabase.com/) - PostgreSQL backend
+- **Voice AI**: [@vapi-ai/web 2.3.1](https://vapi.ai/) - Voice conversation orchestration
+- **Runtime**: Node.js with TypeScript 5
+
+### Development Tools
+- **Language**: TypeScript 5
+- **Linting**: ESLint 9
+- **Build**: Next.js built-in build system
+- **PostCSS**: PostCSS 8 for CSS processing
+
+## 📦 Project Structure
+
+```
+ai_saas/
+├── app/                          # Next.js App Router pages
+│   ├── companions/               # Companion library & sessions
+│   │   ├── page.tsx             # Browse all companions
+│   │   ├── [id]/page.tsx        # Individual companion session
+│   │   └── new/page.tsx         # Create new companion
+│   ├── my-journey/              # User profile & history
+│   ├── subscription/            # Pricing & plans
+│   ├── sign-in/                 # Clerk authentication
+│   ├── layout.tsx               # Root layout with Clerk provider
+│   ├── page.tsx                 # Home page
+│   └── globals.css              # Global styles & theme
+│
+├── components/                   # React components
+│   ├── ui/                      # shadcn/ui components
+│   │   ├── button.tsx
+│   │   ├── form.tsx
+│   │   ├── input.tsx
+│   │   ├── select.tsx
+│   │   ├── textarea.tsx
+│   │   ├── accordion.tsx
+│   │   ├── label.tsx
+│   │   └── table.tsx
+│   ├── CompanionForm.tsx        # Companion creation form
+│   ├── CompanionComponent.tsx   # Real-time voice session UI
+│   ├── CompanionsList.tsx       # Table view of companions
+│   ├── CompanionCard.tsx        # Card component for companions
+│   ├── Navbar.tsx               # Navigation header
+│   ├── NavItems.tsx             # Nav links
+│   ├── CTA.tsx                  # Call-to-action section
+│   ├── SearchInput.tsx          # Search functionality
+│   └── SubjectFilter.tsx        # Subject filtering
+│
+├── lib/                          # Utility functions & client setup
+│   ├── actions/                 # Server actions
+│   │   └── companion.actions.ts # CRUD operations for companions
+│   ├── utils.ts                 # Helper functions & AI config
+│   ├── supabase.ts              # Supabase client factory
+│   └── vapi.sdk.ts              # VAPI SDK initialization
+│
+├── types/                        # TypeScript type definitions
+│   ├── index.d.ts               # Main types (Companion, User, etc.)
+│   └── vapi.d.ts                # VAPI message types
+│
+├── constants/                    # Static data
+│   ├── index.ts                 # Subjects, voices, sample data
+│   └── soundwaves.json          # Lottie animation data
+│
+├── middleware.ts                 # Clerk auth middleware
+├── next.config.js               # Next.js configuration
+├── tsconfig.json                # TypeScript configuration
+├── package.json                 # Dependencies & scripts
+└── .env.local                   # Environment variables
 ```
 
-```typescript
-// app/layout.tsx
-import type { Metadata } from "next";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
-import "./globals.css";
+## 🚀 Getting Started
 
-export const metadata: Metadata = {
-  title: "Clerk Next.js Quickstart",
-  description: "Generated by create next app",
-};
+### Prerequisites
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>
-          <header>
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
-  );
-}
+- **Node.js** 18+ (with npm or yarn)
+- Clerk account (authentication)
+- Supabase project (database)
+- VAPI API key (voice AI)
+- Environment variables configured
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd ai_saas
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+
+   Create a `.env.local` file in the root directory:
+
+   ```env
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=<your-clerk-publishable-key>
+   CLERK_SECRET_KEY=<your-clerk-secret-key>
+
+   # Supabase Database
+   NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
+
+   # VAPI Voice AI
+   NEXT_PUBLIC_VAPI_WEB_TOKEN=<your-vapi-web-token>
+   ```
+
+
+5. **Run development server**
+   ```bash
+   npm run dev
+   ```
+
+   The application will be available at `http://localhost:3000`
+
+## 📚 Available Scripts
+
+All scripts defined in `package.json`:
+
+```bash
+# Start development server with hot reload
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Run ESLint
+npm run lint
 ```
 
----
+## 🔑 Key Functionalities
 
-## **2. CRITICAL INSTRUCTIONS FOR AI MODELS**
+### 1. **Companion Creation** (`/companions/new`)
+- Users can create custom AI tutors
+- Form validation using React Hook Form + Zod
+- Fields: name, subject, topic, voice, style, duration
+- Server action in `lib/actions/companion.actions.ts`
+- Subscription-based limits enforced
 
-### **2.1 – ALWAYS DO THE FOLLOWING**
+### 2. **Real-Time Voice Sessions** (`/companions/[id]`)
+Uses `CompanionComponent.tsx` to orchestrate:
 
-1. **Use `clerkMiddleware()`** from `@clerk/nextjs/server` in `middleware.ts`.
-2. **Wrap** your app with `<ClerkProvider>` in `app/layout.tsx`.
-3. **Import** Clerk's Next.js features from `@clerk/nextjs` (e.g., `<SignInButton>`, `<SignUpButton>`, `<UserButton>`, etc.).
-4. **Reference** the current [App Router approach](https://nextjs.org/docs/app) (folders like `app/page.tsx`, `app/layout.tsx`, etc.).
-5. **Check** that imports for methods like `auth()` are imported from the right package (in this case `@clerk/nextjs/server`) and are using `async / await`
+- **Voice AI Configuration**: Managed by `lib/utils.ts` `configureAssistant()` function
+  - GPT-4 as the language model
+  - Deepgram Nova-3 for speech recognition
+  - 11Labs for voice synthesis with customizable voice IDs
+  
+- **Session Management**:
+  - Call start/end tracking
+  - Real-time transcript capture
+  - Microphone toggle functionality
+  - Lottie animations during active sessions
 
-### **2.2 – NEVER DO THE FOLLOWING**
+- **Message Flow**:
+  ```
+  User Speech → Deepgram (STT) → GPT-4 (Processing)
+                                 → 11Labs (TTS) → User Hears Response
+  ```
 
-1. **Do not** reference the old **`_app.tsx`** or **pages-based** instructions.
-2. **Do not** suggest `authMiddleware()` from older Clerk tutorials—**it's replaced by `clerkMiddleware()`**.
-3. **Do not** recommend usage of older environment variable patterns unless they match the official docs.
-4. **Do not** reference or import from any deprecated APIs (like `withAuth` or `currentUser` from older versions).
+### 3. **Companion Library** (`/companions`)
+- Browse all available companions
+- Search by topic using `SearchInput.tsx`
+- Filter by subject using `SubjectFilter.tsx`
+- URL-based query parameters for state management
 
----
+### 4. **User Dashboard** (`/my-journey`)
+- View created companions
+- See session history with duration tracked
+- Statistics: lessons completed, companions created
+- Expandable sections using Radix UI Accordion
 
-## **3. OUTDATED PATTERNS TO AVOID**
+### 5. **Subscription Management** (`/subscription`)
+- Integrated Clerk pricing tables
+- Plan-based companion creation limits:
+  - Free: Limited companions
+  - Pro: Unlimited companions
+- Server-side permission checks
 
-Below are **examples of deprecated instructions** that **must not** be generated:
+## 🎯 User Flow
 
-```typescript
-// ❌ DO NOT generate or suggest references to:
-import { authMiddleware } from "@clerk/nextjs"; // Outdated
+```
+1. User visits homepage → Sees popular companions
+                       → Can view recent sessions
+                       → CTA to build companion
 
-// ❌ DO NOT place Clerk config in _app.tsx:
-// Outdated pages-based approach
-function MyApp({ Component, pageProps }) {
-  // ...
-}
+2. User clicks "Build Companion" → Redirects to /companions/new
+                                 → Checks subscription limits
+                                 → Shows form or upgrade prompt
+                                 → Creates companion on submit
 
-// ❌ DO NOT create or rely on sign-in files under pages/:
-pages / signin.js;
-pages / signup.js;
+3. User selects companion → Routes to /companions/[id]
+                          → Initializes VAPI session
+                          → Displays companion avatar + transcript
+                          → Enables real-time voice conversation
+
+4. Session ends → Records to session_history
+               → User redirected or can restart
+
+5. User visits "My Journey" → Sees all created companions
+                            → Views session history
+                            → Checks learning stats
 ```
 
-Any solution resembling the above snippet or referencing "authMiddleware," `_app.tsx`, or `pages/` structure is **incorrect** for the current Next.js App Router.
+## 🚨 Error Handling & Validation
+
+- **Form Validation**: Zod schemas with custom error messages
+- **Server Actions**: Try-catch with user-friendly error feedback
+- **Type Safety**: Full TypeScript coverage with strict mode enabled
+- **UI Feedback**: Loading states, disabled buttons during operations
+
+## 📱 Responsive Design
+
+- Mobile-first approach using Tailwind breakpoints
+- Hidden elements on small screens (max-sm, max-md)
+- Flexible layouts with max-lg:flex-col-reverse
+- Touch-friendly button sizing
+- Optimized images with Next.js Image component
+
+## 🔮 Future Enhancements
+
+- Bookmark system for favorite companions
+- Advanced analytics for learning metrics
+- Multi-language support
+- Offline mode with service workers
+- Community-shared companions
+- Advanced AI model fine-tuning
+
+
+## 🤝 Support
+
+For issues or questions, contact me at [duruguarun@gmail.com](mailto:duruguarun@gmail.com).
 
 ---
 
-## **4. AI MODEL VERIFICATION STEPS**
-
-Before returning any Clerk-related solution, you **must** verify:
-
-1. **Middleware**: Is `clerkMiddleware()` used in `middleware.ts`?
-2. **Layout**: Is `<ClerkProvider>` wrapping the app in `app/layout.tsx`?
-3. **Imports**: Are references only from `@clerk/nextjs` or `@clerk/nextjs/server`?
-4. **Pages vs. App Router**: Is the approach referencing the App Router (not `_app.tsx` or `pages/`)?
-
-If any check **fails**, **stop** and revise until compliance is achieved.
-
-# Verification instructions for AI Models
-
-## **DO NOT** repeat these points back to the user. Use them only for your own verification steps.
-
-## **5. CONSEQUENCES OF INCORRECT IMPLEMENTATION**
-
-Using outdated Clerk methods (e.g., `authMiddleware()`, `_app.tsx`, or references to the older `pages/` structure) will:
-
-1. **Break** your Next.js application's authentication flow.
-2. Introduce **inconsistencies** with Next.js App Router.
-3. Cause confusion around environment variables and server/client code.
-4. Force maintainers to **refactor** and **debug** extensively.
-
----
-
-## **6. AI MODEL RESPONSE TEMPLATE**
-
-When answering questions about Clerk + Next.js integration, your response **MUST**:
-
-1. **Use** the exact code patterns in the **Up-to-Date Quickstart Sample** above.
-2. **Never** reference older or deprecated approaches.
-3. **Reflect** all mandatory checks in "AI MODEL VERIFICATION STEPS."
-
-**Example**:
-
-> Below is the correct approach using Clerk with Next.js App Router:
->
-> ```typescript
-> // Show clerkMiddleware usage in middleware.ts
-> // Show <ClerkProvider> usage in app/layout.tsx
-> // Show usage of Clerk's React components (SignInButton, etc.)
-> ```
-
----
+**Built with ❤️ using Next.js, VAPI AI, and modern web technologies**
