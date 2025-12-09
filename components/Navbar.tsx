@@ -16,10 +16,11 @@ const Navbar = () => {
 			<Link href="/">
 				<div className="flex items-center gap-2.5 cursor-pointer">
 					<Image
-						src="/images/logo.svg"
+						src="/images/logo.png"
 						alt="logo"
-						width={46}
-						height={44}
+						width={70}
+						height={70}
+						className="rounded-4xl absolute w-28 top-0 brightness-[1.1] saturate-0 contrast-[1.2]"
 					/>
 				</div>
 			</Link>

@@ -10,8 +10,11 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-	title: "Converso",
+	title: "Tekytalk",
 	description: "Real-time AI Teaching Platform",
+	icons:{
+		icon: '/logo.png'
+	}
 };
 
 export default function RootLayout({
